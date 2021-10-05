@@ -1,0 +1,5 @@
+# prettier config
+trailingComma: 'es5'
+tabWidth: 5
+semi: true,
+singleQuote: true
