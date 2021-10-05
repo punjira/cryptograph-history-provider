@@ -1,0 +1,22 @@
+{
+  "name": "cryptograph-history-provider",
+  "version": "1.0.0",
+  "description": "binance base history provider for ctyptograph application",
+  "main": "index.js",
+  "scripts": {
+    "test": "npm test",
+    "prepare": "husky install"
+  },
+  "keywords": [
+    "cryptograph",
+    "binance",
+    "OHLC",
+    "candlestick",
+    "provider"
+  ],
+  "author": "punjira",
+  "license": "ISC",
+  "devDependencies": {
+    "husky": "^7.0.0"
+  }
+}
