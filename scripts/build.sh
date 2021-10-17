@@ -1,6 +1,6 @@
 echo "building application"
 echo "if eslint meets any errors, the building process with be terminated"
 
-echo "running lists, tests and building"
+echo "running lints, tests and building"
 
-npm run lint && npm run build
+npm run lint && tsc

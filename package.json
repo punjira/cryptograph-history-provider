@@ -5,10 +5,11 @@
      "main": "dist/index.js",
      "scripts": {
           "test": "jest",
-          "start": "tsc && node dist/index.js",
+          "dev": "concurrently -k \"tsc -w\" \"nodemon ./dist/src/index.js\"",
+          "start": "node dist/src/index.js",
           "prepare": "husky install",
           "lint": "eslint . --ext .ts",
-          "build": "sh ./scripts/build.sh"
+          "build": "rimraf dist/ && sh ./scripts/build.sh"
      },
      "keywords": [
           "cryptograph",
@@ -23,9 +24,11 @@
           "@types/jest": "^27.0.2",
           "@typescript-eslint/eslint-plugin": "^4.33.0",
           "@typescript-eslint/parser": "^4.33.0",
+          "concurrently": "^6.3.0",
           "eslint": "^7.32.0",
           "husky": "^7.0.0",
           "jest": "^27.2.4",
+          "rimraf": "^3.0.2",
           "ts-jest": "^27.0.5",
           "typescript": "^4.4.3"
      },
