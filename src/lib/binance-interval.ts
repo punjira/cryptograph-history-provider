@@ -2,6 +2,7 @@ import { redisClient } from '../redis/redis-clinet';
 import { promisify } from 'util';
 import { getBinanceKLines } from '../service/binance';
 import { logger, LOG_LEVELS } from '../../winston';
+import { natsClient } from '../nats/nats-helper';
 
 // not using bluebird to keep intellisence
 const client = redisClient.getInstance().getClient();
@@ -106,6 +107,12 @@ async function updateExisting(
                     // remove oldest data
                     await asyncHDEL(`${symbol}-${k}`, sortedKeys[0]);
                }
+               /**
+                * publish **notification** (not actual candle) that data has been updated
+                */
+               natsClient.getInstance().publishMessage('CANDLE_UPDATE', {
+                    ticker: `${symbol}-${k}`,
+               });
           }
      }
 }
