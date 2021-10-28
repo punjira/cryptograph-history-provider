@@ -27,8 +27,6 @@ natsClient
                .getClient()
                .subscribe(EXCHANGE_UPDATE_EVENT);
           exchange_subscription.on('message', function (message: Message) {
-               console.log('--------------------------------------');
-               console.log(message.getSubject());
                switch (message.getSubject()) {
                     case EXCHANGE_UPDATE_EVENT:
                          // update local exchange database
