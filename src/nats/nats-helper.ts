@@ -20,8 +20,10 @@ export const natsClient = (function () {
           getClient() {
                return this.stan;
           }
-          publishMessage() {
-               console.log('should publish messages');
+          publishMessage(topic: string, message: object) {
+               this.stan.publish(topic, JSON.stringify(message), () => {
+                    // do some logging
+               });
           }
      }
      let instance: NatsClient;
