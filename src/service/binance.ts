@@ -3,6 +3,7 @@ import {
      binanceBaseAddress,
      binanceCandleSticks,
      binancePrefix,
+     binanceTickerPrice,
 } from '../endpoints';
 
 // from binance docs
@@ -43,6 +44,31 @@ export function getBinanceKLines(
                })
                .catch((err) => {
                     return reject(err);
+               });
+     });
+}
+
+export type BinancePriceResponse = {
+     symbol: string;
+     price: string;
+};
+
+/**
+ *
+ * get latest price for all symbols
+ */
+export function getBinancePrice(): Promise<BinancePriceResponse[]> {
+     return new Promise((resolve, reject) => {
+          const options: AxiosRequestConfig = {
+               method: 'GET',
+               url: binanceBaseAddress + binancePrefix + binanceTickerPrice,
+          };
+          axios(options)
+               .then((data: AxiosResponse<BinancePriceResponse[]>) => {
+                    return resolve(data.data);
+               })
+               .catch((err: any) => {
+                    reject(err);
                });
      });
 }
