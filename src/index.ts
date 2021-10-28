@@ -16,8 +16,10 @@ import { feedInitialData } from './lib/binance-initial-history';
 feedInitialData();
 
 import historyRoutes from './routes/history-routes';
+import priceRoutes from './routes/price-routes';
 
 app.use('/history', historyRoutes);
+app.use('/price', priceRoutes);
 
 app.listen(process.env.PORT, () => {
      console.log('server is up on port ', process.env.PORT);
