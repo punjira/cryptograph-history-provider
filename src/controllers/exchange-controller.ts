@@ -14,3 +14,14 @@ export function createExchanges(exchanges: Exchange[]) {
           );
      });
 }
+
+export function getAllExchanges(): Promise<Exchange[]> {
+     return new Promise((resolve, reject) => {
+          ExchangeModel.find({}, function (err, result) {
+               if (err) {
+                    return reject(err);
+               }
+               return resolve(result);
+          });
+     });
+}
