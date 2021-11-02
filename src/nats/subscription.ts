@@ -2,7 +2,7 @@ import { Message } from 'node-nats-streaming';
 import { natsClient } from './nats-helper';
 
 import { createExchanges } from '../controllers/exchange-controller';
-import { Exchange } from '../models/exchange-model';
+import { Exchange } from '@cryptograph-app/shared-models';
 import { logger, LOG_LEVELS } from '../../winston';
 
 const EXCHANGE_UPDATE_EVENT = 'EXCHANGE_UPDATE';
