@@ -6,10 +6,6 @@ require('./database/mongo');
 require('./nats/subscription');
 import { redisClient } from './redis/redis-clinet';
 
-import { createSchedule } from './lib/binance-schedule-coins';
-
-createSchedule();
-
 redisClient.getInstance().getClient();
 
 import { feedInitialData } from './lib/binance-initial-history';
