@@ -26,6 +26,7 @@ const frameMap = {
 };
 
 export async function updateFromBinance(symbols: string[]) {
+     console.log('-------------------------------');
      for (let symbol of symbols) {
           try {
                const NewKLines = await getBinanceKLines(
@@ -58,16 +59,55 @@ async function updateExisting(
 ) {
      const number_converted = data.map((el) => Number(el));
      for (let k of Object.keys(frameMap)) {
+          if (!symbol || !k || !frameMap[k]) {
+               logger(
+                    LOG_LEVELS.ERROR,
+                    'something is really wrong here, the passed in symbol or interval is invalid!',
+                    file_location
+               );
+               continue;
+          }
+          try {
+               const redis_keys: string[] = await asyncHKEYS(`${symbol}-${k}`);
+               if (!redis_keys || !redis_keys.length) {
+                    continue;
+               }
+          } catch (err) {
+               logger(
+                    LOG_LEVELS.ERROR,
+                    'skipping empty key on redis error, ' +
+                         symbol +
+                         ' interval: ' +
+                         k
+               );
+               continue;
+          }
           if (Number(data[0]) % frameMap[k] !== 0) {
                // data is not new, update the latest one
                const [highPrice, lowPrice, closePrice] =
                     getCandleProperties(data);
                const keys: string[] = await asyncHKEYS(`${symbol}-${k}`);
                const sortedKeys = keys.sort(sortKeys);
-               const recentKey = await asyncHGET(
-                    `${symbol}-${k}`,
-                    String(sortedKeys.at(-1))
-               );
+               let recentKey;
+               try {
+                    recentKey = await asyncHGET(
+                         `${symbol}-${k}`,
+                         String(sortedKeys.at(-1))
+                    );
+               } catch (err) {}
+               if (!recentKey) {
+                    logger(
+                         LOG_LEVELS.ERROR,
+                         'not recent key found for hash ' +
+                              `${symbol}-${k} with last sorted key of ${String(
+                                   sortedKeys.at(-1)
+                              )}` +
+                              ' recentKey: ' +
+                              recentKey,
+                         file_location
+                    );
+                    continue;
+               }
                const Obj = JSON.parse(recentKey);
                Obj[4] = closePrice;
                Obj[2] = Obj[2] > highPrice ? Obj[2] : highPrice;
@@ -87,10 +127,26 @@ async function updateExisting(
                // update latest candle with previous information.
                const keys: string[] = await asyncHKEYS(`${symbol}-${k}`);
                const sortedKeys = keys.sort(sortKeys);
-               const PrevFixed = await asyncHGET(
-                    `${symbol}-${k}`,
-                    sortedKeys.at(-2)
-               );
+               let PrevFixed;
+               try {
+                    PrevFixed = await asyncHGET(
+                         `${symbol}-${k}`,
+                         sortedKeys.at(-2)
+                    );
+               } catch (err) {}
+               if (!PrevFixed) {
+                    logger(
+                         LOG_LEVELS.ERROR,
+                         'not recent key found for hash ' +
+                              `${symbol}-${k} with last sorted key of ${String(
+                                   sortedKeys.at(-1)
+                              )}` +
+                              ' recentKey: ' +
+                              PrevFixed,
+                         file_location
+                    );
+                    continue;
+               }
                const Obj = JSON.parse(PrevFixed);
                const [highPrice, lowPrice, closePrice] =
                     getCandleProperties(prev);
@@ -113,6 +169,12 @@ async function updateExisting(
                natsClient.getInstance().publishMessage('CANDLE_UPDATE', {
                     ticker: `${symbol}-${k}`,
                });
+               natsClient
+                    .getInstance()
+                    .publishMessage('NEW_CANDLESTICK_UPDATE_EVENT', {
+                         ticker: `${symbol}-${k}`,
+                         data: Obj,
+                    });
           }
      }
 }
