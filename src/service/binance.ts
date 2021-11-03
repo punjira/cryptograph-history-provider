@@ -48,6 +48,34 @@ export function getBinanceKLines(
      });
 }
 
+export function getBinanceKLinesWindow(
+     symbol: string,
+     interval: string,
+     startTime: string,
+     endTime: string
+): Promise<(number | string)[][]> {
+     return new Promise((resolve, reject) => {
+          const options: AxiosRequestConfig = {
+               method: 'GET',
+               url: binanceBaseAddress + binancePrefix + binanceCandleSticks,
+               params: {
+                    symbol: symbol.toUpperCase(),
+                    interval,
+                    startTime,
+                    endTime,
+               },
+          };
+          axios(options)
+               .then((data: AxiosResponse<BinanceKLineResponse[]>) => {
+                    const stripped = data.data.map((el) => el.slice(0, 7));
+                    return resolve(stripped);
+               })
+               .catch((err) => {
+                    return reject(err);
+               });
+     });
+}
+
 export type BinancePriceResponse = {
      symbol: string;
      price: string;
