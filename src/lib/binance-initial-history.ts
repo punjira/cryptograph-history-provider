@@ -41,8 +41,6 @@ export async function feedInitialData() {
                file_location
           );
           await queue(exchanges);
-          createSchedule();
-          console.log('all done!, the updating process should only start now');
      } catch (err) {
           logger(
                LOG_LEVELS.ERROR,
