@@ -9,7 +9,9 @@ import { redisClient } from './redis/redis-clinet';
 redisClient.getInstance().getClient();
 
 import { feedInitialData } from './lib/binance-initial-history';
+import { createSchedule } from './lib/binance-schedule-coins';
 feedInitialData();
+createSchedule();
 
 import historyRoutes from './routes/history-routes';
 import priceRoutes from './routes/price-routes';
