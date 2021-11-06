@@ -198,6 +198,9 @@ async function checkData(ticker: string) {
                //      file_location
                // );
                const data = await getDataFromBinance(ticker, one, 200);
+               if (!data) {
+                    continue;
+               }
                await writeRedis(ticker, one, convertArrayToNumbers(data));
           }
           const missing_data = await checkDataGaps(ticker, one);
@@ -216,6 +219,9 @@ async function checkData(ticker: string) {
                //      file_location
                // );
                const data = await getDataFromBinance(ticker, one, 200);
+               if (!data) {
+                    continue;
+               }
                await writeRedis(ticker, one, convertArrayToNumbers(data));
           }
      }
