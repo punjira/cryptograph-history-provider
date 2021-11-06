@@ -192,11 +192,11 @@ async function checkData(ticker: string) {
           // if no data is found for a ticker, we fetch the whole thing
           const length = await checkDataLength(ticker, one);
           if (!length) {
-               logger(
-                    LOG_LEVELS.INFO,
-                    `${ticker} on ${one} interval is empty, fetching 200 candles from binance`,
-                    file_location
-               );
+               // logger(
+               //      LOG_LEVELS.INFO,
+               //      `${ticker} on ${one} interval is empty, fetching 200 candles from binance`,
+               //      file_location
+               // );
                const data = await getDataFromBinance(ticker, one, 200);
                await writeRedis(ticker, one, convertArrayToNumbers(data));
           }
@@ -210,11 +210,11 @@ async function checkData(ticker: string) {
            *    consider recursive
            */
           if (missing_data && missing_data.length) {
-               logger(
-                    LOG_LEVELS.INFO,
-                    `${ticker} has gaps, fetching 200 candles from binance`,
-                    file_location
-               );
+               // logger(
+               //      LOG_LEVELS.INFO,
+               //      `${ticker} has gaps, fetching 200 candles from binance`,
+               //      file_location
+               // );
                const data = await getDataFromBinance(ticker, one, 200);
                await writeRedis(ticker, one, convertArrayToNumbers(data));
           }
@@ -321,6 +321,9 @@ async function handleUpdateData(
 
 async function update(ticker: string) {
      const newCandles = await getDataFromBinance(ticker, '1m', 2);
+     if (!newCandles) {
+          return;
+     }
      if (!newCandles.length) {
           logger(
                LOG_LEVELS.ERROR,
