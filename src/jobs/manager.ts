@@ -12,9 +12,9 @@ export default async function createUpdateSchedule() {
           const tickers = getTickersArray(exchanges);
           const candleSchedule = schedule.scheduleJob(
                '*/59 * * * * *',
-               async function () {
+               function () {
                     for (let i = 0; i < tickers.length - 1; i++) {
-                         await tickerUpdate(tickers[i]);
+                         tickerUpdate(tickers[i]);
                     }
                }
           );
