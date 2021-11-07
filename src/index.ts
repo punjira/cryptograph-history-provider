@@ -2,7 +2,8 @@ import express from 'express';
 const app = express();
 import cors from 'cors';
 app.use(cors());
-require('./database/mongo');
+import { MongoConnect } from './database/mongo';
+import manager from './jobs/manager';
 require('./nats/subscription');
 // import { redisClient } from './redis/redis-clinet';
 
@@ -12,8 +13,9 @@ require('./nats/subscription');
 // import { createSchedule } from './lib/binance-schedule-coins';
 // feedInitialData();
 // createSchedule();
-import manager from './jobs/manager';
-manager();
+MongoConnect(() => {
+     manager();
+});
 
 import historyRoutes from './routes/history-routes';
 import priceRoutes from './routes/price-routes';
