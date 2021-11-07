@@ -11,7 +11,7 @@ export default async function createUpdateSchedule() {
           const exchanges = await getAllExchanges();
           const tickers = getTickersArray(exchanges);
           const candleSchedule = schedule.scheduleJob(
-               '*/59 * * * * *',
+               '*/1 * * * *',
                function () {
                     console.log('updating candlestick prices for all tickers');
                     for (let i = 0; i < tickers.length - 1; i++) {
