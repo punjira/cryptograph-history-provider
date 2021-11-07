@@ -6,22 +6,43 @@ import { Exchange } from '@cryptograph-app/shared-models';
 import { logger, LOG_LEVELS } from '../../winston';
 
 const EXCHANGE_UPDATE_EVENT = 'EXCHANGE_UPDATE';
-
-/**
- * setting manual ack to true might introduce side-effects since several other \
- * services are listening to this message
- */
-// const options = natsClient
-//      .getInstance()
-//      .getClient()
-//      .subscriptionOptions()
-//      .setManualAckMode(true);
+const EXCHANGE_LIST_REPLY = 'EXCHANGE_LIST_REPLY';
+const EXCHANGE_LIST_REQUEST = 'EXCHANGE_LIST_REQUEST';
 
 natsClient
      .getInstance()
      .getClient()
      .on('connect', () => {
           // subscribe after connection
+          natsClient.getInstance().getClient().publish(EXCHANGE_LIST_REQUEST);
+          const exchange_reply_subscriptions = natsClient
+               .getInstance()
+               .getClient()
+               .subscribe(EXCHANGE_LIST_REPLY);
+          exchange_reply_subscriptions.on('message', (message: Message) => {
+               const msg = message.getData();
+               if (typeof msg === 'string') {
+                    const exchanges: Exchange[] = JSON.parse(msg);
+                    createExchanges(exchanges)
+                         .then(() => {
+                              logger(
+                                   LOG_LEVELS.INFO,
+                                   'local exchange list updated from nats with ' +
+                                        exchanges.length +
+                                        ' new data',
+                                   'history-provider/nats/subscription.ts'
+                              );
+                         })
+                         .catch((err) => {
+                              logger(
+                                   LOG_LEVELS.ERROR,
+                                   'error writing incoming nats exchange list to local history-provider database Error: ' +
+                                        err,
+                                   'history-provider/nats/subscription.ts'
+                              );
+                         });
+               }
+          });
           const exchange_subscription = natsClient
                .getInstance()
                .getClient()
