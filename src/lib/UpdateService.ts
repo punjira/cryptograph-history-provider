@@ -359,4 +359,5 @@ export async function tickerUpdate(ticker: string) {
      // check data on all frames before performing the base 1 minute update interval
      await checkData(ticker);
      await update(ticker);
+     console.log(ticker);
 }
