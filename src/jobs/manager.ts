@@ -3,7 +3,7 @@ import { getAllExchanges } from '../controllers/exchange-controller';
 import { getTickersArray } from '../helpers/utils';
 import schedule from 'node-schedule';
 
-import { tickerUpdate } from './UpdateService';
+import { tickerUpdate } from '../lib/UpdateService';
 import { getBinanceTickerPrice } from '../lib/binance-price-interval';
 
 export default async function createUpdateSchedule() {
