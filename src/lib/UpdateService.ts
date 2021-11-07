@@ -174,11 +174,7 @@ async function updateCallback(
      channel?: string,
      message?: string
 ) {
-     message &&
-          logger(
-               LOG_LEVELS.INFO,
-               `${ticker} ${interval} update completed, ${message}`
-          );
+     // publish to nats,?
 }
 
 /**
