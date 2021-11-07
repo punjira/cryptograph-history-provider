@@ -13,6 +13,7 @@ export default async function createUpdateSchedule() {
           const candleSchedule = schedule.scheduleJob(
                '*/59 * * * * *',
                function () {
+                    console.log('updating candlestick prices for all tickers');
                     for (let i = 0; i < tickers.length - 1; i++) {
                          tickerUpdate(tickers[i]);
                     }
