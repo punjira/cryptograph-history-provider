@@ -22,9 +22,11 @@ export const MongoConnect = function (callback) {
           );
      });
      db.on('disconnected', () => {
-          mongoose.connect(`${process.env.MONGO_URL}/history`, {
-               connectTimeoutMS: 3000,
+          mongoose.connect(`${process.env.MONGO_URL}`, {
+               connectTimeoutMS: 60000,
                keepAlive: true,
+               dbName: 'history',
+               socketTimeoutMS: 60000,
           });
      });
 };
