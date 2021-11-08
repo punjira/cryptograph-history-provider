@@ -10,6 +10,7 @@ import {
      getCandleProperties,
      sortKeys,
 } from '../helpers/utils';
+import { natsClient } from '../nats/nats-helper';
 import Redis from '../redis/asyncRedis';
 import { getBinanceKLines } from '../service/binance';
 
@@ -174,7 +175,10 @@ async function updateCallback(
      channel?: string,
      message?: string
 ) {
-     // publish to nats,?
+     natsClient.getInstance().publishMessage(channel, {
+          ticker: `${ticker}-${interval}`,
+          data: data,
+     });
 }
 
 /**
@@ -221,7 +225,6 @@ async function checkData(ticker: string) {
                await writeRedis(ticker, one, convertArrayToNumbers(data));
           }
      }
-     updateCallback(ticker, 'all', undefined, undefined, 'checking completed');
 }
 
 /**
@@ -271,13 +274,6 @@ async function handleNewData(
                // delete the oldest data
                await deleteHash(ticker, interval, sorted_keys[0]);
           }
-          updateCallback(
-               ticker,
-               interval,
-               undefined,
-               undefined,
-               'new data handling finished'
-          );
      }
 }
 
@@ -311,14 +307,8 @@ async function handleUpdateData(
           Obj[2] = Obj[2] > hp ? Obj[2] : hp;
           Obj[3] = Obj[3] < lp ? Obj[3] : lp;
           await setSymbolHash(ticker, interval, String(Obj[0]), Obj);
-          updateCallback(
-               ticker,
-               interval,
-               undefined,
-               undefined,
-               'handling update data is finished'
-          );
      }
+     updateCallback(ticker, '1m', latest, 'NEW_CANDLESTICK_UPDATE_EVENT');
 }
 
 async function update(ticker: string) {
