@@ -6,7 +6,10 @@ import { logger, LOG_LEVELS } from '../../winston';
 import { getAllExchanges } from '../controllers/exchange-controller';
 import { upsertPrice } from '../controllers/price-controller';
 import { TickerPrice } from '../models/price-model';
+import { natsClient } from '../nats/nats-helper';
 import { getBinancePrice } from '../service/binance';
+
+import { PRICE_UPDATE_EVENT } from '../nats/subscription';
 
 export async function getBinanceTickerPrice() {
      try {
@@ -22,6 +25,10 @@ export async function getBinanceTickerPrice() {
           valid.forEach(async (el) => {
                await upsertPrice(el);
           });
+          natsClient
+               .getInstance()
+               .getClient()
+               .publish(PRICE_UPDATE_EVENT, JSON.stringify(valid));
           logger(
                LOG_LEVELS.INFO,
                'successfully updated ' + valid.length + ' coin price',

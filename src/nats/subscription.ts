@@ -8,6 +8,7 @@ import { logger, LOG_LEVELS } from '../../winston';
 const EXCHANGE_UPDATE_EVENT = 'EXCHANGE_UPDATE';
 const EXCHANGE_LIST_REPLY = 'EXCHANGE_LIST_REPLY';
 const EXCHANGE_LIST_REQUEST = 'EXCHANGE_LIST_REQUEST';
+export const PRICE_UPDATE_EVENT = 'PRICE_UPDATE_EVENT';
 
 natsClient
      .getInstance()
