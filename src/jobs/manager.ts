@@ -19,7 +19,7 @@ export default async function createUpdateSchedule() {
                     }
                }
           );
-          const priceJob = schedule.scheduleJob('*/5 * * * * *', function () {
+          const priceJob = schedule.scheduleJob('*/1 * * * * *', function () {
                getBinanceTickerPrice();
           });
      } catch (err: any) {
