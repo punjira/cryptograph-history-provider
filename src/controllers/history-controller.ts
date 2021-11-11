@@ -4,6 +4,7 @@ import { redisClient } from '../redis/redis-clinet';
 export function getCandles(req, res, next) {
      const token = req.query.symbol;
      const frame = req.query.interval;
+     const limit = req.query.limit || 200;
      redisClient
           .getInstance()
           .getClient()
@@ -20,7 +21,7 @@ export function getCandles(req, res, next) {
                     JSON.parse(reply[el])
                );
                return res.status(200).json({
-                    data: arr.sort(sortKeys),
+                    data: arr.sort(sortKeys).splice(-limit),
                });
           });
 }
